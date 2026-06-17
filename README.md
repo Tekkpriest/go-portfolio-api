@@ -29,6 +29,7 @@ Make sure you have Go (v. 1.22+) installed and also make sure you have a Github 
     EMAIL_FROM=noreply@yourdomain.com  
     EMAIL_TO=your_personal_email@example.com      
     ALLOWED=https://yourdomain.com    
-    PORT=7302```  
+    PORT=7302
+    ```  
 3. **Download Dependencies** ```go mod download```
 4. **Build or run your server** ```go build && ./go-portfolio-api```
