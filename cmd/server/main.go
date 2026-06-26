@@ -19,11 +19,13 @@ func main() {
 		log.Println("No .env found while initialising server...")
 	}
 
-	handlers.StartCacheUpdater()
+	handlers.StartAboutCache()
+	handlers.StartProjectCache()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /api/projects", handlers.HandleGetProjects)
-	mux.HandleFunc("POST /api/contact", handlers.HandlePostContact)
+	mux.HandleFunc("GET /api/aboutme", handlers.GetHandleAbout)
+	mux.HandleFunc("GET /api/projects", handlers.GetHandleProjects)
+	mux.HandleFunc("POST /api/contact", handlers.PostHandleContact)
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -25,13 +25,13 @@ type CachedProjects struct {
 	projects []GitHubProject
 }
 
-var cache = &CachedProjects{}
+var projectCache = &CachedProjects{}
 
 func fetchProjects() ([]GitHubProject, error) {
 	token := os.Getenv("GITHUB_TOKEN")
 	username := os.Getenv("GITHUB_USERNAME")
 	if token == "" || username == "" {
-		return nil, fmt.Errorf("Github Token or Username not found in .env")
+		return nil, fmt.Errorf("Github Token or Username not in .env")
 	}
 
 	apiURL := fmt.Sprintf("https://api.github.com/users/%s/repos", username)
@@ -41,8 +41,7 @@ func fetchProjects() ([]GitHubProject, error) {
 	}
 	request.Header.Set("Accept", "application/vnd.github+json")
 	request.Header.Set("Authorization", "Bearer "+token)
-	request.Header.Set("User-Agent", "Go-Portfolio-API/1.0 (+https://github.com/tekkpriest/go-portfolio-api)")
-
+	request.Header.Set("User-Agent", "Portfolio/1.0 (+https://github.com/tekkpriest/go-portfolio-api)")
 	client := &http.Client{Timeout: 10 * time.Second}
 	response, err := client.Do(request)
 	if err != nil {
@@ -62,47 +61,47 @@ func fetchProjects() ([]GitHubProject, error) {
 	return projects, nil
 }
 
-func StartCacheUpdater() {
+func StartProjectCache() {
 	log.Println("Starting initial download of Github projects")
 	if freshProjects, err := fetchProjects(); err == nil {
-		cache.Lock()
-		cache.projects = freshProjects
-		cache.Unlock()
-		log.Println("Download success")
+		projectCache.Lock()
+		projectCache.projects = freshProjects
+		projectCache.Unlock()
+		log.Println("Download of projects successful")
 	} else {
-		log.Printf("Download failed: %v. Trying again..", err)
+		log.Printf("Downloading projects failed: %v. Trying again..", err)
 	}
 
-	ticker := time.NewTicker(10 * time.Minute)
+	ticker := time.NewTicker(20 * time.Minute) // Currently set to update GH projects every 20 Minutes, feel free to change.
 
 	go func() {
 		for range ticker.C {
-			log.Println("Starting Background Caching...")
+			log.Println("Starting Background Caching of Projects...")
 			freshProjects, err := fetchProjects()
 			if err != nil {
-				log.Printf("Background Update Failed: %v (Keeping old data)", err)
+				log.Printf("Background Update of Projects Failed: %v", err)
 				continue
 			}
 
-			cache.Lock()
-			cache.projects = freshProjects
-			cache.Unlock()
-			log.Println("Background Update and writing to Cache success.")
+			projectCache.Lock()
+			projectCache.projects = freshProjects
+			projectCache.Unlock()
+			log.Println("Background Update of Projects and writing to Cache success.")
 		}
 	}()
 }
 
-func HandleGetProjects(w http.ResponseWriter, r *http.Request) {
-	cache.RLock()
-	defer cache.RUnlock()
+func GetHandleProjects(w http.ResponseWriter, r *http.Request) {
+	projectCache.RLock()
+	defer projectCache.RUnlock()
 
-	if cache.projects == nil {
+	if projectCache.projects == nil {
 		http.Error(w, "Projects are still loading..", http.StatusServiceUnavailable)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(cache.projects); err != nil {
+	if err := json.NewEncoder(w).Encode(projectCache.projects); err != nil {
 		log.Printf("JSON Encoding Error (Github Projects): %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}

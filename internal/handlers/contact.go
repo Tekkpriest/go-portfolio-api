@@ -19,7 +19,7 @@ type ContactForm struct {
 	Message string `json:"msg"`
 }
 
-func HandlePostContact(w http.ResponseWriter, r *http.Request) {
+func PostHandleContact(w http.ResponseWriter, r *http.Request) {
 	emailFrom := os.Getenv("EMAIL_FROM")
 	emailTo := os.Getenv("EMAIL_TO")
 	if emailFrom == "" || emailTo == "" {
@@ -52,8 +52,8 @@ func HandlePostContact(w http.ResponseWriter, r *http.Request) {
 	htmlBody := fmt.Sprintf(`
 		<p><strong>Name:</strong> %s</p>
 		<p><strong>E-Mail:</strong> %s</p>
-		<p><strong>Firma:</strong> %s</p>
-		<p><strong>Nachricht:</strong>%s<br></p>
+		<p><strong>Company:</strong> %s</p>
+		<p><strong>Message:</strong>%s<br></p>
 	`,
 		html.EscapeString(form.Name),
 		html.EscapeString(form.Email),
