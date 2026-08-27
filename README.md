@@ -12,10 +12,19 @@ Feel free to use this under MIT License and if you have some suggestions on what
 
 That being said, lets go over some core features:
 
-* **Caching -** Github Projects are cached directly by a dedicated go routine in memory every 20 minutes to avoid overloading the GitHub API and enable seamless usage by visitors of your page, while still being up to date, which also allows for a more zero latency approach for said visitors. The about.md file is also cached in RAM and updated every 60 minutes via a Go Routine.
-* **Security -** I am avoiding Go's default http client to add explicit timeouts, so there's additional security in terms of request attacks and also the CORS Handler, aswell as Multiplexer is set to only accept the needed methods of the Github / Resend API respectively. Also i added graceful shutdowns to cleanly close active connections and finish ongoing requests before shutting down.
+* **Caching -** Github Projects are cached directly by a dedicated go routine in memory every 60 minutes to avoid overloading the GitHub API and enable seamless usage by visitors of your page, while still being up to date, which also allows for a more zero latency approach for said visitors. The about.md file is also cached in RAM and updated every 60 minutes via a Go Routine.
+* **Security -** I am avoiding Go's default http client to add explicit timeouts, so there's additional security in terms of request attacks and also the CORS Handler, aswell as Multiplexer is set to only accept the needed methods of the Github / Resend API respectively. Also i added graceful shutdowns to cleanly close active connections and finish ongoing requests before shutting down. Also added a health endpoint, so you can check for the last refresh age.
 * **Separation of Concerns -** I tried to use the "Go Standard" way of organizing the project, aswell as adhere to Separation of Concerns Design principles to have stuff working as independantly as possible.
-  
+
+
+## API Endpoints
+
+| Method | Endpoint        | Description                                      |
+|--------|-----------------|---------------------------------------------------|
+| GET    | `/api/aboutme`  | Returns the cached about.md content as HTML       |
+| GET    | `/api/projects` | Returns your cached GitHub repositories as JSON   |
+| POST   | `/api/contact`  | Submits the contact form and sends an email       |
+| GET    | `/api/health`   | Reports cache freshness / service health          |
 
 ## Prerequisites for using this project
 Make sure to read through the about.go and projects.go files comments if you want to change the frequency of updates or want to update the unsafe mode for the Markdown to HTML converter, which allows you to embed html tags, use your css classes and embed JavaScript. Be careful and make sure to not make your md files accessible for others though, as there are some security risks involved if using unsafe (Injections).
@@ -31,7 +40,7 @@ Make sure you have Go (v. 1.22+) installed and also make sure you have a Github 
     RESEND_API_KEY=your_resend_api_key  
     EMAIL_FROM=noreply@yourdomain.com  
     EMAIL_TO=your_personal_email@example.com      
-    ALLOWED=https://yourdomain.com    
+    ALLOWED_ORIGIN=https://yourdomain.com    
     PORT=7302 (Default/Fallback, highly advised to use another port)
     ABOUT_MD_PATH=path_to_your_md_file
     ```
