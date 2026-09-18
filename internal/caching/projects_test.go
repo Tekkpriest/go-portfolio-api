@@ -22,7 +22,8 @@ func TestProjectCache_Refresh_Success(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`[
+		w.Write([]byte( //nolint:errcheck // test-server, write cannot fail
+			`[ 
 			{"id": 101, "name": "go-test-portfolio", "stargazers_count": 42, "language": "Go"},
 			{"id": 102, "name": "go-test-webcrawler", "stargazers_count": 10, "language": "Go"}
 		]`))
@@ -65,7 +66,7 @@ func TestProjectCache_Refresh_Errors(t *testing.T) {
 
 			mockGitHub := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(tc.WantStatusCode)
-				w.Write([]byte(tc.WantBody))
+				w.Write([]byte(tc.WantBody)) //nolint:errcheck // test-server, write cannot fail
 			}))
 			defer mockGitHub.Close()
 

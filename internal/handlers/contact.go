@@ -38,7 +38,7 @@ func NewContactHandler(m Mailer) *ContactHandler {
 
 func (h *ContactHandler) PostContact(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, 65536)
-	defer r.Body.Close()
+	defer r.Body.Close() //nolint:errcheck // request body is fully read, close error not applicable
 
 	var form ContactForm
 

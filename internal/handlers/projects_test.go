@@ -63,7 +63,7 @@ func TestProjectHandler_GetProjects(t *testing.T) {
 			mockSource := &mockProjectSource{projects: tc.SourceProjects, err: tc.SourceErr}
 			handler := NewProjectHandler(mockSource)
 
-			req := httptest.NewRequest("GET", "/api/projects", nil)
+			req := httptest.NewRequestWithContext(t.Context(), "GET", "/api/projects", nil)
 			rec := httptest.NewRecorder()
 
 			handler.GetProjects(rec, req)

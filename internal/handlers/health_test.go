@@ -39,7 +39,7 @@ func TestHealthHandler_GetHealth(t *testing.T) {
 			projects := &mockHealthChecker{lastRefresh: tc.ProjectsLastRefresh}
 			handler := NewHealthHandler(about, projects, 90*time.Minute)
 
-			req := httptest.NewRequest("GET", "/api/health", nil)
+			req := httptest.NewRequestWithContext(t.Context(), "GET", "/api/health", nil)
 			rec := httptest.NewRecorder()
 			handler.GetHealth(rec, req)
 

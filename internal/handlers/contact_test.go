@@ -106,7 +106,7 @@ func TestContactHandler_PostContact(t *testing.T) {
 				body, _ = json.Marshal(tc.Form)
 			}
 
-			req := httptest.NewRequest("POST", "/api/contact", bytes.NewBuffer(body))
+			req := httptest.NewRequestWithContext(t.Context(), "POST", "/api/contact", bytes.NewBuffer(body))
 			rec := httptest.NewRecorder()
 
 			handler.PostContact(rec, req)

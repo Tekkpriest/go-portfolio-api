@@ -47,7 +47,7 @@ func TestAboutHandler_GetAbout(t *testing.T) {
 			mockSource := &mockAboutSource{html: tc.SourceHTML, err: tc.SourceErr}
 			handler := NewAboutHandler(mockSource)
 
-			req := httptest.NewRequest("GET", "/api/aboutme", nil)
+			req := httptest.NewRequestWithContext(t.Context(), "GET", "/api/aboutme", nil)
 			rec := httptest.NewRecorder()
 
 			handler.GetAbout(rec, req)

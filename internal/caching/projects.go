@@ -96,7 +96,12 @@ func (cache *ProjectCache) refresh(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+
+	defer func() {
+		if err := response.Body.Close(); err != nil {
+			slog.Warn("failed to close github response body", "error", err)
+		}
+	}()
 
 	if response.StatusCode != http.StatusOK {
 		return fmt.Errorf("github api status: %d", response.StatusCode)
