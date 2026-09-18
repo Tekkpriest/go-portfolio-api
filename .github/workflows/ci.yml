@@ -1,0 +1,43 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+
+      - name: setup go
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.x'
+          check-latest: true
+
+      - name: verify
+        run: |
+          go mod tidy
+          git diff --exit-code
+        
+      - name: golang-ci
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: latest
+
+      - name: govulncheck
+        uses: golang/govulncheck-action@v1
+
+      - name: test with race detection
+        run: go test -v -shuffle=on -race ./...
+
+      - name: compile
+        run: go build -o go-portfolio-api ./cmd/server
