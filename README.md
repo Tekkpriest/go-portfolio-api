@@ -27,9 +27,9 @@ That being said, lets go over some core features:
 | GET    | `/api/health`   | Reports cache freshness / service health          |
 
 ## Prerequisites for using this project
-Make sure to read through the about.go and projects.go files comments if you want to change the frequency of updates or want to update the unsafe mode for the Markdown to HTML converter, which allows you to embed html tags, use your css classes and embed JavaScript. Be careful and make sure to not make your md files accessible for others though, as there are some security risks involved if using unsafe (Injections).
+Make sure to read through the about.go and projects.go files comments (in caching folder) if you want to change the frequency of updates or want to update the unsafe mode for the Markdown to HTML converter, which allows you to embed html tags, use your css classes and embed JavaScript. Be careful and make sure to not make your md files accessible for others though, as there are some security risks involved if using unsafe (Injections).
 
-Make sure you have Go (v. 1.22+) installed and also make sure you have a Github Access Token (with public repo's set) for the API Pulls of your projects, aswell as your Resend API Key which is needed for the contact form ready.
+Make sure you have Go (v. 1.26+) installed and also make sure you have a Github Access Token (with public repo's set) for the API Pulls of your projects, aswell as your Resend API Key which is needed for the contact form ready.
 
 1. **Create an about.md** It can be in any directory on your pc / server, just make sure to put the path in correctly in the following .env.
 2. **Clone the Repository** ```git clone https://github.com/tekkpriest/go-portfolio-api.git```
